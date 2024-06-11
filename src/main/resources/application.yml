@@ -1,6 +1,30 @@
 server:
   port: 9090
 spring:
+  shardingsphere:
+    datasource:
+      names:
+        master,slave
+      master:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://127.0.0.1:3306/reggie?characterEncoding=utf-8&useSSL=false
+        username: root
+        password: 123456
+      slave:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://127.0.0.1:3307/reggie?characterEncoding=utf-8&useSSL=false
+        username: root
+        password: 123456
+    masterslave:
+      load-balance-algorithm-type: round_robin
+      name: dataSource
+      master-data-source-name: master
+      slave-data-source-names: slave
+    props:
+      sql:
+        show: true
   application:
     name: reggie_application
   datasource:
@@ -22,6 +46,8 @@ spring:
   cache:
     redis:
       time-to-live: 1800000
+  main:
+    allow-bean-definition-overriding: true
 mybatis-plus:
   configuration:
     #在映射实体或者属性时，将数据库中表名和字段名中的下划线去掉，按照驼峰命名法映射
